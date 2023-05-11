@@ -11,4 +11,3 @@ HandyVR can be installed in Unity by pasting the Repository link [https://github
 ## Branches
 - The [`main`]() branch will contain release candidates for the package.
 - The [`dev`]() branch will contain work in progress updates when features have been "finished".
-- The [`sync`]() is for work in progress, there is no guarantee, in fact I would assume, that the commits in this branch will not work, as they are for me syncing the project across machines.
