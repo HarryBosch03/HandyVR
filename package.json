@@ -1,0 +1,17 @@
+{
+  "name": "net.harrybosch.handyvr",
+  "version": "1.0.0",
+  "displayName": "Bosching Machine Presents, Handy VR",
+  "author": 
+  {
+    "name": "Harry Bosch",
+    "email": "harrybosch03@gmail.com",
+    "url": "https://github.com/HarryBosch03/HandyVR"
+  },
+  "unity": "2021.3",
+  "dependencies": {
+    "com.unity.inputsystem": "1.4.4",
+    "com.unity.xr.oculus": "3.2.3",
+    "com.unity.xr.openxr": "1.5.3"
+  }
+}
