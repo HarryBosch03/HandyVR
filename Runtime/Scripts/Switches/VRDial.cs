@@ -1,4 +1,3 @@
-using System;
 using HandyVR.Bindables;
 using HandyVR.Interfaces;
 using HandyVR.Player;

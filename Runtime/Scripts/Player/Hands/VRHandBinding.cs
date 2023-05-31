@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using HandyVR.Bindables;
 using HandyVR.Interfaces;
 using UnityEngine;
@@ -40,13 +39,13 @@ namespace HandyVR.Player.Hands
             this.hand = hand;
 
             if (!lines) lines = GetComponentInChildren<LineRenderer>();
-            lines.enabled = false;
+            if (lines) lines.enabled = false;
         }
 
         public void LateUpdate()
         {
             PointingAt = null;
-            lines.enabled = false;
+            if (lines) lines.enabled = false;
 
             // Call OnGrip if the Grip Input changed this frame.
             hand.Input.Grip.ChangedThisFrame(OnGrip);
@@ -55,7 +54,7 @@ namespace HandyVR.Player.Hands
             if (hand.ActiveBinding) return;
 
             PointingAt = GetPointingAt();
-            if (PointingAt != null)
+            if (PointingAt != null && lines)
             {
                 lines.SetLine(hand.PointRef.position, PointingAt.transform.position);
             }
@@ -120,8 +119,8 @@ namespace HandyVR.Player.Hands
             ActiveBinding.Deactivate();
 
             // Preemptively reset the state of the hand model and rigidbody.
-            hand.HandModel.gameObject.SetActive(true);
-
+            hand.SetModelVisibility(true);
+            
             hand.Rigidbody.isKinematic = false;
             hand.Rigidbody.velocity = Vector3.zero;
             hand.Rigidbody.angularVelocity = Vector3.zero;

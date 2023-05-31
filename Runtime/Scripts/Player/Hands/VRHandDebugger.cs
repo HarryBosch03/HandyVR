@@ -1,10 +1,7 @@
 using System;
-using HandyVR.Bindables;
-using HandyVR.Core;
 using HandyVR.Interfaces;
 using HandyVR.Switches;
 using TMPro;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 
 namespace HandyVR.Player.Hands

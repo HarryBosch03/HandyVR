@@ -16,8 +16,7 @@ namespace HandyVR.Player.Hands
         [Tooltip("How much of the calculated force is applied per frame. Lower numbers result in a smoother result but can cause rubber-banding.")] [SerializeField] [Range(0.0f, 1.0f)]
         private float forceScaling = 1.0f;
 
-        [Space] 
-        [SerializeField] private float dislocationSpring = 100.0f;
+        [Space] [SerializeField] private float dislocationSpring = 100.0f;
         [SerializeField] private float dislocationDamper = 8.0f;
         [SerializeField] private float dislocationDeadzone = 0.1f;
         [SerializeField] private float dislocationSpeed = 15.0f;
@@ -112,9 +111,12 @@ namespace HandyVR.Player.Hands
             dislocated = dislocationPercent > 1.0f;
             dislocationPercent = Mathf.Clamp01(dislocationPercent);
 
-            dislocationLines.enabled = dislocated;
-            dislocationLines.SetLine(rb.position, newPosition, true, lineSubdivisions);
-            dislocationLines.widthMultiplier = baseLineWidth * dislocationPercent;
+            if (dislocationLines)
+            {
+                dislocationLines.enabled = dislocated;
+                dislocationLines.SetLine(rb.position, newPosition, true, lineSubdivisions);
+                dislocationLines.widthMultiplier = baseLineWidth * dislocationPercent;
+            }
         }
 
         public void OnCollision(Collision collision)

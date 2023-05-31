@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using HandyVR.Bindables;
+using HandyVR.Editor;
 using HandyVR.Interfaces;
 using HandyVR.Player.Input;
 using UnityEngine;
@@ -13,7 +15,7 @@ namespace HandyVR.Player
     [SelectionBase]
     [DisallowMultipleComponent]
     [AddComponentMenu("HandyVR/VR Hand", Reference.AddComponentMenuOrder.Components)]
-    public sealed class VRHand : MonoBehaviour
+    public sealed class VRHand : MonoBehaviour, IHasValidationChecks
     {
         [Space]
         [SerializeField] private Chirality chirality;
@@ -25,26 +27,33 @@ namespace HandyVR.Player
         private HandInput input;
         private IVRHandMovement movement;
         private IVRHandBinding binding;
-        
-        private Transform pointRef;
+        private Transform handModel;
 
         public HandInput Input => input;
         public IVRHandBinding BindingController => binding;
         public IVRHandMovement Movement => movement;
-        public Transform HandModel { get; private set; }
+        public Transform PointRef { get; private set; }
 
         public VRBinding ActiveBinding => binding.ActiveBinding;
         public Rigidbody Rigidbody { get; private set; }
         public Transform Target { get; private set; }
-        public Transform PointRef => pointRef ? pointRef : transform;
         public Collider[] Colliders { get; private set; }
         public bool Flipped => chirality != defaultHandModelChirality;
-        
+
+        public List<ValidationCheck> ValidationList => new()
+        {
+            IHasValidationChecks.HasComponent(typeof(IVRHandMovement)),
+            IHasValidationChecks.HasComponent(typeof(IVRHandBinding)),
+        };
+
         private void Awake()
         {
             // Clear Parent to stop the transform hierarchy from fucking up physics.
             // Group objects to keep hierarchy neat.
-            Target = transform.parent;
+            Target = new GameObject($"{name} [Hand Target]").transform;
+            Target.SetParent(transform.parent);
+            Target.position = transform.position;
+            Target.rotation = transform.rotation;
             Utility.Scene.BreakHierarchyAndGroup(transform);
 
             var chiralData = GetChiralData();
@@ -68,15 +77,22 @@ namespace HandyVR.Player
             }
             
             // Cache Hierarchy.
-            pointRef = transform.DeepFind("Point Ref");
-            HandModel = transform.DeepFind("Model");
+            PointRef = FindOrFallback("Point Ref");
+            handModel = FindOrFallback("Model", null);
             
             // Flip hand if chiral mismatch.
-            if (Flipped)
+            if (Flipped && handModel)
             {
                 var scale = Vector3.Reflect(Vector3.one, flipAxis.normalized);
-                HandModel.localScale = scale;
+                handModel.localScale = scale;
             }
+        }
+
+        private Transform FindOrFallback(string name) => FindOrFallback(name, transform);
+        private Transform FindOrFallback(string name, Transform fallback)
+        {
+            var res = transform.DeepFind(name);
+            return res ? res : fallback;
         }
 
         private void FixedUpdate()
@@ -94,7 +110,7 @@ namespace HandyVR.Player
 
             if (!Input.Active)
             {
-                HandModel.gameObject.SetActive(false);
+                SetModelVisibility(false);
                 return;
             }
             
@@ -105,7 +121,7 @@ namespace HandyVR.Player
             if (ActiveBinding)
             {
                 // Hide hand model if we are bound to something
-                HandModel.gameObject.SetActive(false);
+                SetModelVisibility(false);
                 
                 // Pass inputs to bound object.
                 ActiveBinding.bindable.InputCallback(this, IVRBindable.InputType.Trigger, Input.Trigger);
@@ -113,7 +129,7 @@ namespace HandyVR.Player
             else
             {
                 // Show hand and animate if unbound.
-                HandModel.gameObject.SetActive(true);
+                SetModelVisibility(true);
             }
         }
         
@@ -145,6 +161,12 @@ namespace HandyVR.Player
                 },
                 _ => throw new ArgumentOutOfRangeException()
             };
+        }
+
+        public void SetModelVisibility(bool state)
+        {
+            if (!handModel) return;
+            handModel.gameObject.SetActive(state);
         }
         
         public class ChiralData
