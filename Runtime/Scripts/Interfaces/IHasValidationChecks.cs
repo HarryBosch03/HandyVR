@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace HandyVR.Editor
+namespace HandyVR.Interfaces
 {
     public interface IHasValidationChecks
     {

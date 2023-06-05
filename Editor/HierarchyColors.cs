@@ -1,4 +1,4 @@
-﻿using System;
+﻿using HandyVR.Interfaces;
 using UnityEditor;
 using UnityEngine;
 
@@ -14,7 +14,7 @@ namespace HandyVR.Editor
 
         private static void OnHierarchyWindowItemOnGUI(int instanceId, Rect selectionRect)
         {
-            var gameObject = EditorUtility.InstanceIDToObject(instanceId) as GameObject;
+            var gameObject = UnityEditor.EditorUtility.InstanceIDToObject(instanceId) as GameObject;
             if (!gameObject) return;
 
             if (!gameObject.TryGetComponent(out IHasValidationChecks validationChecks)) return;

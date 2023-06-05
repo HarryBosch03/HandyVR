@@ -1,5 +1,4 @@
-﻿using HandyVR.Bindables.Pickups;
-using HandyVR.Interfaces;
+﻿using HandyVR.Interfaces;
 using HandyVR.Player;
 using HandyVR.Player.Input;
 using UnityEngine;

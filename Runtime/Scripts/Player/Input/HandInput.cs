@@ -34,8 +34,6 @@ namespace HandyVR.Player.Input
 
         public void Update()
         {
-            Active = false;
-            
             var controller = Controller();
             if (controller == null) return;
             if ((InputTrackingState)controller.trackingState.ReadValue() == InputTrackingState.None) return;

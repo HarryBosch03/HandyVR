@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using HandyVR.Bindables;
-using HandyVR.Editor;
 using HandyVR.Interfaces;
 using HandyVR.Player.Input;
 using UnityEngine;
@@ -18,22 +17,28 @@ namespace HandyVR.Player
     public sealed class VRHand : MonoBehaviour, IHasValidationChecks
     {
         [Space]
-        [SerializeField] private Chirality chirality;
+        public Chirality chirality;
         [Tooltip("Chirality of the hand model used.")]
-        [SerializeField] private Chirality defaultHandModelChirality;
+        public Chirality defaultHandModelChirality;
         [Tooltip("Axis to flip the hand model on if there is a chiral mismatch")]
-        [SerializeField] private Vector3 flipAxis = Vector3.right;
+        public Vector3 flipAxis = Vector3.right;
+        [Tooltip("The Transform used to point at things, the Z axis should be the direction of the index finger")]
+        public Transform pointTransform;
+        [Tooltip("The root object for the Visible Model and Colliders for the hand")]
+        public Transform handModel;
+        [Tooltip("The Position the hands will be transposed to when reset")]
+        public Transform resetTransform;
+        public float resetDistanceThreshold = 2.0f;
 
         private HandInput input;
         private IVRHandMovement movement;
         private IVRHandBinding binding;
-        private Transform handModel;
+        private IVRHandModule[] modules;
 
         public HandInput Input => input;
         public IVRHandBinding BindingController => binding;
         public IVRHandMovement Movement => movement;
-        public Transform PointRef { get; private set; }
-
+        public Transform PointTransform => pointTransform ? pointTransform : transform;
         public VRBinding ActiveBinding => binding.ActiveBinding;
         public Rigidbody Rigidbody { get; private set; }
         public Transform Target { get; private set; }
@@ -48,6 +53,8 @@ namespace HandyVR.Player
 
         private void Awake()
         {
+            if (!resetTransform) resetTransform = transform.root;
+
             // Clear Parent to stop the transform hierarchy from fucking up physics.
             // Group objects to keep hierarchy neat.
             Target = new GameObject($"{name} [Hand Target]").transform;
@@ -71,15 +78,12 @@ namespace HandyVR.Player
             movement = GetComponent<IVRHandMovement>();
             binding = GetComponent<IVRHandBinding>();
 
-            foreach (var module in GetComponents<IVRHandModule>())
+            modules = GetComponents<IVRHandModule>();
+            foreach (var module in modules)
             {
                 module.Init(this);
             }
-            
-            // Cache Hierarchy.
-            PointRef = FindOrFallback("Point Ref");
-            handModel = FindOrFallback("Model", null);
-            
+
             // Flip hand if chiral mismatch.
             if (Flipped && handModel)
             {
@@ -88,19 +92,17 @@ namespace HandyVR.Player
             }
         }
 
-        private Transform FindOrFallback(string name) => FindOrFallback(name, transform);
-        private Transform FindOrFallback(string name, Transform fallback)
-        {
-            var res = transform.DeepFind(name);
-            return res ? res : fallback;
-        }
-
         private void FixedUpdate()
         {
             if (!Input.Active) return;
 
             // Update Submodules.
             movement.MoveTo(Target.position, Target.rotation);
+
+            if ((transform.position - Target.position).sqrMagnitude > resetDistanceThreshold * resetDistanceThreshold)
+            {
+                ResetHands();
+            }
         }
 
         private void Update()
@@ -115,8 +117,8 @@ namespace HandyVR.Player
             }
             
             // Update Targets Pose.
-            Target.position = Input.Position;
-            Target.rotation = Input.Rotation;
+            Target.localPosition = Input.Position;
+            Target.localRotation = Input.Rotation;
             
             if (ActiveBinding)
             {
@@ -173,6 +175,14 @@ namespace HandyVR.Player
         {
             public Func<XRController> controller;
             public string nameTemplate;
+        }
+
+        public void ResetHands()
+        {
+            foreach (var module in modules)
+            {
+                module.OnHandReset();
+            }
         }
     }
 }

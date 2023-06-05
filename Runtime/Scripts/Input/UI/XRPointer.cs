@@ -15,9 +15,9 @@ namespace HandyVR.Input.UI
     public class XRPointer : MonoBehaviour
     {
         [Tooltip("An in world object that will appear on the UI where the hand is pointing")]
-        [SerializeField] private GameObject cursor;
+        public GameObject cursor;
         [Tooltip("The additive scroll speed of the thumbstick.")]
-        [SerializeField] private float scrollSpeed = 1000.0f;
+        public float scrollSpeed = 1000.0f;
         
         private ExtendedPointerEventData pointerData;
         private VRHand hand;
@@ -25,7 +25,7 @@ namespace HandyVR.Input.UI
         public HandInput.InputWrapper TriggerAction => hand.Input.Trigger;
         public HandInput.InputWrapper ThumbstickXAction => hand.Input.ThumbstickX;
         public HandInput.InputWrapper ThumbstickYAction => hand.Input.ThumbstickY;
-        public Transform PointRef => hand.PointRef;
+        public Transform PointRef => hand.PointTransform;
         public static List<XRPointer> All { get; } = new ();
 
         private void Awake()

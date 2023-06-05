@@ -2,8 +2,7 @@
   "name": "net.harrybosch.handyvr",
   "version": "1.0.0",
   "displayName": "Bosching Machine Presents, Handy VR",
-  "author": 
-  {
+  "author": {
     "name": "Harry Bosch",
     "email": "harrybosch03@gmail.com",
     "url": "https://github.com/HarryBosch03/HandyVR"
@@ -13,5 +12,6 @@
     "com.unity.inputsystem": "1.4.4",
     "com.unity.xr.oculus": "3.2.3",
     "com.unity.xr.openxr": "1.5.3"
-  }
+  },
+  "description": "HandyVR is a pet project to make a framework in Unity providing physics based VR hands, similar to Half-Life: Alyx. This project is for my personal use, however feel free to use it or take inspiration from it."
 }

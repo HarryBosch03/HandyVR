@@ -21,6 +21,8 @@ namespace HandyVR.Player.Hands
             floatDriver.Init(hand);
         }
 
+        public void OnHandReset() { }
+
         private void Update()
         {
             floatDriver.Update();

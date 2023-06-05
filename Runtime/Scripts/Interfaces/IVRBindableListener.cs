@@ -1,8 +1,8 @@
-﻿using HandyVR.Interfaces;
+﻿using HandyVR.Bindables;
 using HandyVR.Player;
 using HandyVR.Player.Input;
 
-namespace HandyVR.Bindables.Pickups
+namespace HandyVR.Interfaces
 {
     /// <summary>
     /// Interface for when User wants to add custom logic to a Pickup, like a gun's trigger pull.
