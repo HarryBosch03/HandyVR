@@ -69,8 +69,8 @@ namespace HandyVR.Player.Hands
 
         public void OnHandReset()
         {
-            transform.position = hand.resetTransform.position;
-            transform.rotation = hand.resetTransform.rotation;
+            transform.position = hand.ResetTransform.position;
+            transform.rotation = hand.ResetTransform.rotation;
 
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;

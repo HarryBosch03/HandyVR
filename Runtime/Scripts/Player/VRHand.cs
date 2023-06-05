@@ -27,7 +27,6 @@ namespace HandyVR.Player
         [Tooltip("The root object for the Visible Model and Colliders for the hand")]
         public Transform handModel;
         [Tooltip("The Position the hands will be transposed to when reset")]
-        public Transform resetTransform;
         public float resetDistanceThreshold = 2.0f;
 
         private HandInput input;
@@ -35,6 +34,7 @@ namespace HandyVR.Player
         private IVRHandBinding binding;
         private IVRHandModule[] modules;
 
+        public Transform ResetTransform { get; private set; }
         public HandInput Input => input;
         public IVRHandBinding BindingController => binding;
         public IVRHandMovement Movement => movement;
@@ -53,7 +53,9 @@ namespace HandyVR.Player
 
         private void Awake()
         {
-            if (!resetTransform) resetTransform = transform.root;
+            ResetTransform = new GameObject($"{name} Reset Point").transform;
+            ResetTransform.position = transform.position;
+            ResetTransform.rotation = transform.rotation;
 
             // Clear Parent to stop the transform hierarchy from fucking up physics.
             // Group objects to keep hierarchy neat.
