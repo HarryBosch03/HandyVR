@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using HandyVR.Bindables;
-using HandyVR.Editor;
 using HandyVR.Interfaces;
 using HandyVR.Player.Input;
 using UnityEngine;

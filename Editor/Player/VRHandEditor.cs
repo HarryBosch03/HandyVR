@@ -1,3 +1,4 @@
+using HandyVR.Interfaces;
 using HandyVR.Player;
 using UnityEditor;
 
