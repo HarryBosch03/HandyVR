@@ -17,10 +17,12 @@ namespace HandyVR.Player.Hands
         [Tooltip("The angle of the cone used to find Pickups to create Bindings")] [SerializeField]
         private float pointingAtAngle = 15.0f;
 
-        [Space] [SerializeField] private Vector3 bindingOffsetTranslation;
+        [Space] 
+        [SerializeField] private Vector3 bindingOffsetTranslation;
         [SerializeField] private Vector3 bindingOffsetRotation;
 
-        [Space] [SerializeField] private LineRenderer lines;
+        [Space] 
+        public LineRenderer lines;
 
         private VRHand hand;
 
@@ -42,6 +44,8 @@ namespace HandyVR.Player.Hands
             if (lines) lines.enabled = false;
         }
 
+        public void OnHandReset() => DeactivateBinding();
+
         public void LateUpdate()
         {
             PointingAt = null;
@@ -56,7 +60,7 @@ namespace HandyVR.Player.Hands
             PointingAt = GetPointingAt();
             if (PointingAt != null && lines)
             {
-                lines.SetLine(hand.PointRef.position, PointingAt.transform.position);
+                lines.SetLine(hand.PointTransform.position, PointingAt.transform.position);
             }
         }
 
@@ -82,8 +86,8 @@ namespace HandyVR.Player.Hands
                 // Do not use object we cannot see.
                 if (!CanSee(bindable)) return -1.0f;
 
-                var d1 = (bindable.transform.position - hand.PointRef.position).normalized;
-                var d2 = hand.PointRef.forward;
+                var d1 = (bindable.transform.position - hand.PointTransform.position).normalized;
+                var d2 = hand.PointTransform.forward;
 
                 // Reciprocate the result to find the object with the smallest dot product.
                 return 1.0f / (Mathf.Acos(Vector3.Dot(d1, d2)) * Mathf.Rad2Deg);
@@ -99,7 +103,7 @@ namespace HandyVR.Player.Hands
         /// <returns>Is there a clear line of sight from the Index Finger to the Bindable.</returns>
         private bool CanSee(IVRBindable other)
         {
-            var ray = new Ray(hand.PointRef.position, other.transform.position - hand.PointRef.position);
+            var ray = new Ray(hand.PointTransform.position, other.transform.position - hand.PointTransform.position);
             return Physics.Raycast(ray, out var hit) && other.transform.IsChildOf(hit.transform);
         }
 

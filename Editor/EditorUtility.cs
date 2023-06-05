@@ -4,7 +4,7 @@ using Object = UnityEngine.Object;
 
 namespace HandyVR.Editor
 {
-    public static class Utility
+    public static class EditorUtility
     {
         public delegate bool PathFilter(string path);
 

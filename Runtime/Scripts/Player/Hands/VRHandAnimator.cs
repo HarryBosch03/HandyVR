@@ -27,6 +27,8 @@ namespace HandyVR.Player.Hands
             animator = GetComponentInChildren<Animator>();
         }
 
+        public void OnHandReset() { }
+
         public void Update()
         {
             float tGripValue, tTriggerValue;
