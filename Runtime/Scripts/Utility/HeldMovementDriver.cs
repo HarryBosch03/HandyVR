@@ -20,6 +20,12 @@ namespace HandyVR.Utility
             
             var delta = newRotation * Quaternion.Inverse(rb.rotation);
             delta.ToAngleAxis(out var angleDeg, out var axis);
+            if (!float.IsFinite(axis.x) || !float.IsFinite(axis.y) || !float.IsFinite(axis.z))
+            {
+                axis = Vector3.zero;
+                angleDeg = 0.0f;
+            }
+            
             var angle = angleDeg * Mathf.Deg2Rad;
             var angle2 = angle - Mathf.PI * 2.0f;
             if (Mathf.Abs(angle2) < Mathf.Abs(angle)) angle = angle2;

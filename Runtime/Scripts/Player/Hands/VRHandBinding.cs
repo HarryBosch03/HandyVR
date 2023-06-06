@@ -24,21 +24,20 @@ namespace HandyVR.Player.Hands
         [Space] 
         public LineRenderer lines;
 
-        private VRHand hand;
-
+        public VRHand Hand { get; private set; }
         public VRBinding ActiveBinding { get; private set; }
         public IVRBindable PointingAt { get; private set; }
 
-        public Vector3 BindingPosition => hand.Target.position + bindingOffsetTranslation;
-        public Quaternion BindingRotation => hand.Target.rotation * Quaternion.Euler(bindingOffsetRotation);
+        public Vector3 BindingPosition => Hand.Target.position + bindingOffsetTranslation;
+        public Quaternion BindingRotation => Hand.Target.rotation * Quaternion.Euler(bindingOffsetRotation);
 
-        public bool IsBindingFlipped => hand.Flipped;
+        public bool IsBindingFlipped => Hand.Flipped;
 
         public int BindingPriority => IVRBindingTarget.HandPriority;
 
         public void Init(VRHand hand)
         {
-            this.hand = hand;
+            this.Hand = hand;
 
             if (!lines) lines = GetComponentInChildren<LineRenderer>();
             if (lines) lines.enabled = false;
@@ -52,15 +51,15 @@ namespace HandyVR.Player.Hands
             if (lines) lines.enabled = false;
 
             // Call OnGrip if the Grip Input changed this frame.
-            hand.Input.Grip.ChangedThisFrame(OnGrip);
+            Hand.Input.Grip.ChangedThisFrame(OnGrip);
 
             // Bail if binding is valid.
-            if (hand.ActiveBinding) return;
+            if (Hand.ActiveBinding) return;
 
             PointingAt = GetPointingAt();
             if (PointingAt != null && lines)
             {
-                lines.SetLine(hand.PointTransform.position, PointingAt.transform.position);
+                lines.SetLine(Hand.PointTransform.position, PointingAt.transform.position);
             }
         }
 
@@ -86,8 +85,8 @@ namespace HandyVR.Player.Hands
                 // Do not use object we cannot see.
                 if (!CanSee(bindable)) return -1.0f;
 
-                var d1 = (bindable.transform.position - hand.PointTransform.position).normalized;
-                var d2 = hand.PointTransform.forward;
+                var d1 = (bindable.transform.position - Hand.PointTransform.position).normalized;
+                var d2 = Hand.PointTransform.forward;
 
                 // Reciprocate the result to find the object with the smallest dot product.
                 return 1.0f / (Mathf.Acos(Vector3.Dot(d1, d2)) * Mathf.Rad2Deg);
@@ -103,7 +102,7 @@ namespace HandyVR.Player.Hands
         /// <returns>Is there a clear line of sight from the Index Finger to the Bindable.</returns>
         private bool CanSee(IVRBindable other)
         {
-            var ray = new Ray(hand.PointTransform.position, other.transform.position - hand.PointTransform.position);
+            var ray = new Ray(Hand.PointTransform.position, other.transform.position - Hand.PointTransform.position);
             return Physics.Raycast(ray, out var hit) && other.transform.IsChildOf(hit.transform);
         }
 
@@ -123,11 +122,11 @@ namespace HandyVR.Player.Hands
             ActiveBinding.Deactivate();
 
             // Preemptively reset the state of the hand model and rigidbody.
-            hand.SetModelVisibility(true);
+            Hand.SetModelVisibility(true);
             
-            hand.Rigidbody.isKinematic = false;
-            hand.Rigidbody.velocity = Vector3.zero;
-            hand.Rigidbody.angularVelocity = Vector3.zero;
+            Hand.Rigidbody.isKinematic = false;
+            Hand.Rigidbody.velocity = Vector3.zero;
+            Hand.Rigidbody.angularVelocity = Vector3.zero;
         }
 
         private void OnGripPressed()
@@ -144,6 +143,9 @@ namespace HandyVR.Player.Hands
 
         public void OnBindingActivated(VRBinding binding)
         {
+            if (!binding) return;
+            if (ActiveBinding) return;
+            
             ActiveBinding = binding;
         }
 
