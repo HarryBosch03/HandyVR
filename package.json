@@ -13,5 +13,12 @@
     "com.unity.xr.oculus": "3.2.3",
     "com.unity.xr.openxr": "1.5.3"
   },
-  "description": "HandyVR is a pet project to make a framework in Unity providing physics based VR hands, similar to Half-Life: Alyx. This project is for my personal use, however feel free to use it or take inspiration from it."
+  "description": "HandyVR is a pet project to make a framework in Unity providing physics based VR hands, similar to Half-Life: Alyx. This project is for my personal use, however feel free to use it or take inspiration from it.",
+  "samples": [
+    {
+      "displayName": "Default Samples",
+      "description": "Contains a simple scene with a HandyVR rig, some pickups, and controller interactivity.",
+      "path": "Samples~"
+    }
+  ]
 }
