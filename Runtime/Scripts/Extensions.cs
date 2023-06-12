@@ -44,6 +44,14 @@ namespace HandyVR
             }
         }
 
+        public static void SetStretchyLine(this LineRenderer lines, Vector3 a, Vector3 b, float volume, float maxWidth = float.MaxValue, bool worldSpace = true, int subdivisions = 0)
+        {
+            var distance = (b - a).magnitude;
+            var stretch = Mathf.Min(volume / distance, maxWidth);
+            lines.widthMultiplier = stretch;
+            lines.SetLine(a, b, worldSpace, subdivisions);
+        }
+        
         public static void SetRay(this LineRenderer renderer, Vector3 a, Vector3 b, bool worldSpace = true)
         {
             renderer.SetLine(a, a + b, worldSpace);

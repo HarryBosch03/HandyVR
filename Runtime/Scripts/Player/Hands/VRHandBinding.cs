@@ -1,6 +1,7 @@
 using HandyVR.Bindables;
 using HandyVR.Interfaces;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace HandyVR.Player.Hands
 {
@@ -11,11 +12,12 @@ namespace HandyVR.Player.Hands
     [DisallowMultipleComponent]
     public class VRHandBinding : MonoBehaviour, IVRHandBinding
     {
-        [Tooltip("The radius to search for a pickup when the grab button is pressed")] [SerializeField]
-        private float pickupRange = 0.2f;
+        [Tooltip("The radius to search for a pickup when the grab button is pressed")] 
+        [SerializeField] private float directPickupRange = 0.2f;
+        [SerializeField] private float pointPickupRange = 15.0f;
 
-        [Tooltip("The angle of the cone used to find Pickups to create Bindings")] [SerializeField]
-        private float pointingAtAngle = 15.0f;
+        [Tooltip("The angle of the cone used to find Pickups to create Bindings")] 
+        [SerializeField] private float pointingAtAngle = 15.0f;
 
         [Space] 
         [SerializeField] private Vector3 bindingOffsetTranslation;
@@ -23,6 +25,7 @@ namespace HandyVR.Player.Hands
 
         [Space] 
         public LineRenderer lines;
+        private float lineWidth = 1.0f;
 
         public VRHand Hand { get; private set; }
         public VRBinding ActiveBinding { get; private set; }
@@ -37,10 +40,12 @@ namespace HandyVR.Player.Hands
 
         public void Init(VRHand hand)
         {
-            this.Hand = hand;
+            Hand = hand;
 
             if (!lines) lines = GetComponentInChildren<LineRenderer>();
             if (lines) lines.enabled = false;
+
+            if (lines) lineWidth = lines.widthMultiplier;
         }
 
         public void OnHandReset() => DeactivateBinding();
@@ -59,7 +64,7 @@ namespace HandyVR.Player.Hands
             PointingAt = GetPointingAt();
             if (PointingAt != null && lines)
             {
-                lines.SetLine(Hand.PointTransform.position, PointingAt.transform.position);
+                lines.SetStretchyLine(Hand.PointTransform.position, PointingAt.transform.position, 1.0f, lineWidth);
             }
         }
 
@@ -85,6 +90,9 @@ namespace HandyVR.Player.Hands
                 // Do not use object we cannot see.
                 if (!CanSee(bindable)) return -1.0f;
 
+                var distance = (bindable.transform.position - Hand.PointTransform.position).magnitude;
+                if (distance > pointPickupRange) return -1.0f;
+                
                 var d1 = (bindable.transform.position - Hand.PointTransform.position).normalized;
                 var d2 = Hand.PointTransform.forward;
 
@@ -134,7 +142,7 @@ namespace HandyVR.Player.Hands
             // Try to pickup the closest object to the hand.
             // If none can be found, try to create a detached binding with
             // whatever is being pointed at.
-            var pickup = VRBindable.GetBindable(transform.position, pickupRange);
+            var pickup = VRBindable.GetBindable(transform.position, directPickupRange);
             if (pickup == null) pickup = GetPointingAt();
             if (pickup == null) return;
 
