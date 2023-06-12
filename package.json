@@ -1,6 +1,6 @@
 {
   "name": "net.harrybosch.handyvr",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "displayName": "Bosching Machine Presents, Handy VR",
   "author": {
     "name": "Harry Bosch",
@@ -11,7 +11,15 @@
   "dependencies": {
     "com.unity.inputsystem": "1.4.4",
     "com.unity.xr.oculus": "3.2.3",
-    "com.unity.xr.openxr": "1.5.3"
+    "com.unity.xr.openxr": "1.5.3",
+    "com.unity.render-pipelines.universal": "12.1.7"
   },
-  "description": "HandyVR is a pet project to make a framework in Unity providing physics based VR hands, similar to Half-Life: Alyx. This project is for my personal use, however feel free to use it or take inspiration from it."
+  "description": "HandyVR is a pet project to make a framework in Unity providing physics based VR hands, similar to Half-Life: Alyx. This project is for my personal use, however feel free to use it or take inspiration from it.",
+  "samples": [
+    {
+      "displayName": "Default Samples",
+      "description": "Contains a simple scene with a HandyVR rig, some pickups, and controller interactivity.",
+      "path": "Samples~"
+    }
+  ]
 }

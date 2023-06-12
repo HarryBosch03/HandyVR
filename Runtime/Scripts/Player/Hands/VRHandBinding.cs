@@ -12,12 +12,13 @@ namespace HandyVR.Player.Hands
     [DisallowMultipleComponent]
     public class VRHandBinding : MonoBehaviour, IVRHandBinding
     {
-        [Tooltip("The radius to search for a pickup when the grab button is pressed")] 
+        [Tooltip("The radius to search for a pickup when the grab button is pressed")]
         [SerializeField] private float directPickupRange = 0.2f;
         [SerializeField] private float pointPickupRange = 15.0f;
 
         [Tooltip("The angle of the cone used to find Pickups to create Bindings")] 
         [SerializeField] private float pointingAtAngle = 15.0f;
+        [SerializeField] private float maxDistance = 15.0f;
 
         [Space] 
         [SerializeField] private Vector3 bindingOffsetTranslation;
@@ -89,6 +90,7 @@ namespace HandyVR.Player.Hands
             {
                 // Do not use object we cannot see.
                 if (!CanSee(bindable)) return -1.0f;
+                if ((bindable.transform.position - Hand.pointTransform.position).magnitude > maxDistance) return -1.0f;
 
                 var distance = (bindable.transform.position - Hand.PointTransform.position).magnitude;
                 if (distance > pointPickupRange) return -1.0f;

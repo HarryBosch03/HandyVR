@@ -32,9 +32,9 @@ namespace HandyVR.Bindables.Targets
         [Space] [Tooltip("Time to wait after loosing a binding to look for another one")] [SerializeField]
         private float newBindingDelay = 0.5f;
 
-        private VRBinding activeBinding;
         private float lastBoundTime = float.MinValue;
 
+        public VRBinding ActiveBinding { get; private set; }
         public Vector3 BindingPosition => transform.position;
         public Quaternion BindingRotation => transform.rotation;
         public bool IsBindingFlipped => false;
@@ -49,12 +49,24 @@ namespace HandyVR.Bindables.Targets
 
         public void OnBindingActivated(VRBinding binding)
         {
-            activeBinding = binding;
+            ActiveBinding = binding;
+            SetCollision(false);
         }
 
         public void OnBindingDeactivated(VRBinding binding)
         {
             lastBoundTime = Time.time;
+            SetCollision(true);
+        }
+
+        private void SetCollision(bool state)
+        {
+            var body = GetComponentInParent<Rigidbody>().gameObject;
+            if (!body) body = transform.root.gameObject;
+
+            var other = ActiveBinding.bindable.gameObject;
+            
+            Utility.Physics.IgnoreCollision(body, other, !state);
         }
 
         private void OnDrawGizmosSelected()
@@ -65,7 +77,7 @@ namespace HandyVR.Bindables.Targets
 
         private void FixedUpdate()
         {
-            if (!activeBinding) CheckForNewBinding();
+            if (!ActiveBinding) CheckForNewBinding();
         }
 
         /// <summary>

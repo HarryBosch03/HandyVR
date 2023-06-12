@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using HandyVR.Bindables.Targets;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace HandyVR.Bindables.Pickups
 {
@@ -13,19 +14,15 @@ namespace HandyVR.Bindables.Pickups
     [AddComponentMenu("HandyVR/Basic Pickup", Reference.AddComponentMenuOrder.Components)]
     public sealed class VRPickup : VRBindable
     {
-        [Tooltip("A optional binding type used for sockets.")] [SerializeField]
-        private VRBindingType bindingType;
+        [Tooltip("A optional binding type used for sockets.")] 
+        [SerializeField] private VRBindingType bindingType;
+        
+        [Space] [Tooltip("The magnitude of the force applied to a Detached Binding")] 
+        [SerializeField] private float detachedBindingAcceleration = 400.0f;
+        [SerializeField] private float pickupRange = 0.1f;
 
-        [Space] [Tooltip("The magnitude of the force applied to a Detached Binding")] [SerializeField]
-        private float detachedBindingSpeed = 400.0f;
-
-        [Tooltip("The Minimum force applied to the Detached Binding")] [SerializeField]
-        private float detachedBindingInvalidationTime = 1.0f;
-
-        [SerializeField] [Range(0.0f, 1.0f)] private float detachedBindingInvalidationThreshold = 0.5f;
-
-        [Tooltip("List of offset for when the object is Bound.")] [SerializeField]
-        private List<BoundPose> boundPoses;
+        [Tooltip("List of offset for when the object is Bound.")] 
+        [SerializeField] private List<BoundPose> boundPoses;
 
         [SerializeField] private int defaultPose;
         [SerializeField] private int socketPose;
@@ -36,7 +33,7 @@ namespace HandyVR.Bindables.Pickups
         private int boundPoseIndex;
         private bool detachedBinding;
         private Vector3 lastPosition;
-        private float detachedBindingInvalidationTimer;
+        private float detachedBindingSpeed;
 
         private new Rigidbody rigidbody;
         public override Rigidbody Rigidbody => rigidbody;
@@ -105,7 +102,7 @@ namespace HandyVR.Bindables.Pickups
             base.OnBindingActivated(binding);
 
             detachedBinding = true;
-            detachedBindingInvalidationTimer = 0.0f;
+            detachedBindingSpeed = 0.0f;
 
             // Cache each colliders material and override it with the special held material.
             foreach (var data in colliderData)
@@ -198,8 +195,9 @@ namespace HandyVR.Bindables.Pickups
 
             // If the object has the speed to get to the players hand this frame, remove the detached binding
             // and create an actual active binding, then bail.
+            detachedBindingSpeed += detachedBindingAcceleration * Time.deltaTime;
             var frameSpeed = detachedBindingSpeed * Time.deltaTime / rb.mass;
-            if (distance < frameSpeed * Time.deltaTime)
+            if (distance < pickupRange + frameSpeed * Time.deltaTime)
             {
                 detachedBinding = false;
                 return false;
@@ -208,19 +206,6 @@ namespace HandyVR.Bindables.Pickups
             // Apply the force
             var force = direction * frameSpeed - rb.velocity;
             rb.AddForce(force, ForceMode.VelocityChange);
-
-            var delta = rb.position - lastPosition;
-            var distanceTraveled = delta.magnitude;
-            var invalid = distanceTraveled < frameSpeed * detachedBindingInvalidationThreshold;
-
-            detachedBindingInvalidationTimer += (invalid ? 1.0f : -1.0f) * Time.deltaTime / detachedBindingInvalidationTime;
-            if (detachedBindingInvalidationTimer >= 1.0f)
-            {
-                detachedBinding = false;
-                ActiveBinding.Deactivate();
-                return true;
-            }
-            detachedBindingInvalidationTimer = Mathf.Clamp01(detachedBindingInvalidationTimer);
 
             lastPosition = rb.position;
             
