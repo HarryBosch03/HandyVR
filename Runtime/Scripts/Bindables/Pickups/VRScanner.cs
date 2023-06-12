@@ -34,6 +34,9 @@ namespace HandyVR.Bindables.Pickups
             }
         }
 
+        public void OnBindingActivated(VRBinding binding) { }
+        public void OnBindingDeactivated(VRBinding binding) { }
+
         private void Scan(HandInput.InputWrapper input)
         {
             uiText.text = string.Empty;

@@ -44,7 +44,7 @@ namespace HandyVR.Utility
             // Add a force that effectively cancels out the current velocity, and translates the hand to the target position.
             // Using a force instead is purely for collision and stability, MovePosition ended up causing horrific desync.
             rb.AddForce(force, ForceMode.Acceleration);
-            
+
             // Do the same with a torque, match the current target rotation.
             rb.AddTorque(torque, ForceMode.Acceleration);
         }

@@ -1,4 +1,5 @@
-﻿using HandyVR.Interfaces;
+﻿using System;
+using HandyVR.Interfaces;
 using HandyVR.Player;
 using HandyVR.Player.Input;
 using UnityEngine;
@@ -32,8 +33,14 @@ namespace HandyVR.Bindables
         public virtual void OnBindingActivated(VRBinding binding)
         {
             ActiveBinding = binding;
+
+            MessageListeners(l => l.OnBindingActivated(binding));
         }
-        public virtual void OnBindingDeactivated(VRBinding binding) { }
+
+        public virtual void OnBindingDeactivated(VRBinding binding)
+        {
+            MessageListeners(l => l.OnBindingActivated(binding));
+        }
 
         /// <summary>
         /// Used to find pickups within a range.
@@ -72,10 +79,15 @@ namespace HandyVR.Bindables
         /// <param name="action">The action that was called</param>
         public void InputCallback(VRHand hand, IVRBindable.InputType inputType, HandInput.InputWrapper action)
         {
+            MessageListeners(l => l.InputCallback(hand, this, inputType, action));
+        }
+
+        public void MessageListeners(Action<IVRBindableListener> messageCallback)
+        {
             var listeners = GetComponentsInChildren<IVRBindableListener>();
             foreach (var listener in listeners)
             {
-                listener.InputCallback(hand, this, inputType, action);
+                messageCallback(listener);
             }
         }
     }

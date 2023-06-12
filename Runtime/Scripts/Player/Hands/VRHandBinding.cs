@@ -18,7 +18,6 @@ namespace HandyVR.Player.Hands
 
         [Tooltip("The angle of the cone used to find Pickups to create Bindings")] 
         [SerializeField] private float pointingAtAngle = 15.0f;
-        [SerializeField] private float maxDistance = 15.0f;
 
         [Space] 
         [SerializeField] private Vector3 bindingOffsetTranslation;
@@ -41,7 +40,7 @@ namespace HandyVR.Player.Hands
 
         public void Init(VRHand hand)
         {
-            Hand = hand;
+            this.Hand = hand;
 
             if (!lines) lines = GetComponentInChildren<LineRenderer>();
             if (lines) lines.enabled = false;
@@ -90,7 +89,6 @@ namespace HandyVR.Player.Hands
             {
                 // Do not use object we cannot see.
                 if (!CanSee(bindable)) return -1.0f;
-                if ((bindable.transform.position - Hand.pointTransform.position).magnitude > maxDistance) return -1.0f;
 
                 var distance = (bindable.transform.position - Hand.PointTransform.position).magnitude;
                 if (distance > pointPickupRange) return -1.0f;

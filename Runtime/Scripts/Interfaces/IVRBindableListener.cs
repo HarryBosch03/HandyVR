@@ -10,5 +10,8 @@ namespace HandyVR.Interfaces
     public interface IVRBindableListener
     {
         void InputCallback(VRHand hand, VRBindable bindable, IVRBindable.InputType type, HandInput.InputWrapper input);
+
+        void OnBindingActivated(VRBinding binding);
+        void OnBindingDeactivated(VRBinding binding);
     }
 }
