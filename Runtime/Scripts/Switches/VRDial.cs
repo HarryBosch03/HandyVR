@@ -1,3 +1,4 @@
+using System;
 using HandyVR.Bindables;
 using HandyVR.Interfaces;
 using HandyVR.Player;
@@ -36,6 +37,8 @@ namespace HandyVR.Switches
 
         public VRBinding ActiveBinding { get; private set; }
         public Rigidbody Rigidbody => null;
+        public event Action<VRBinding> BindEvent;
+        public event Action<VRBinding> UnbindEvent;
         public bool IsValid() => this;
 
         private void OnEnable()
@@ -53,11 +56,13 @@ namespace HandyVR.Switches
             ActiveBinding = newBinding;
 
             lastRotation = newBinding.target.BindingRotation;
+            
+            BindEvent?.Invoke(newBinding);
         }
 
         public void OnBindingDeactivated(VRBinding oldBinding)
         {
-            
+            UnbindEvent?.Invoke(oldBinding);
         }
 
         private void Update()

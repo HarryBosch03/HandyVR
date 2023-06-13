@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using HandyVR.Bindables.Targets;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace HandyVR.Bindables.Pickups
 {

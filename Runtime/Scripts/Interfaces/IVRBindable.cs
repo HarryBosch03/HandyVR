@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using HandyVR.Bindables;
 using HandyVR.Player;
 using HandyVR.Player.Input;
@@ -10,6 +11,8 @@ namespace HandyVR.Interfaces
     {
         VRBinding ActiveBinding { get; }
         Rigidbody Rigidbody { get; }
+        event Action<VRBinding> BindEvent;
+        event Action<VRBinding> UnbindEvent;
         
         void OnBindingActivated(VRBinding newBinding);
         void OnBindingDeactivated(VRBinding oldBinding);

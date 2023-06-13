@@ -1,7 +1,6 @@
 using HandyVR.Bindables;
 using HandyVR.Interfaces;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace HandyVR.Player.Hands
 {

@@ -13,6 +13,9 @@ namespace HandyVR.Bindables
     {
         public VRBinding ActiveBinding { get; private set; }
         public abstract Rigidbody Rigidbody { get; }
+        
+        public event Action<VRBinding> BindEvent;
+        public event Action<VRBinding> UnbindEvent;
 
         public Vector3 BindingPosition => ActiveBinding.target.BindingPosition;
         public Quaternion BindingRotation => ActiveBinding.target.BindingRotation;
@@ -35,11 +38,13 @@ namespace HandyVR.Bindables
             ActiveBinding = binding;
 
             MessageListeners(l => l.OnBindingActivated(binding));
+            BindEvent?.Invoke(binding);
         }
 
         public virtual void OnBindingDeactivated(VRBinding binding)
         {
             MessageListeners(l => l.OnBindingActivated(binding));
+            UnbindEvent?.Invoke(binding);
         }
 
         /// <summary>
