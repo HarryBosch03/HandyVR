@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 namespace HandyVR.Interfaces
 {
     public interface IHasValidationChecks
     {
         public List<ValidationCheck> ValidationList { get; }
-        
+
         public static ValidationLevel IsValid(IHasValidationChecks target)
         {
             var valid = ValidationLevel.Valid;
@@ -17,9 +20,11 @@ namespace HandyVR.Interfaces
                 var localValid = check.checkCallback(target);
                 valid = localValid > valid ? localValid : valid;
             }
+
             return valid;
         }
 
+#if UNITY_EDITOR
         public static void DrawGUI(IHasValidationChecks target)
         {
             var valid = ValidationLevel.Valid;
@@ -46,6 +51,7 @@ namespace HandyVR.Interfaces
                 EditorGUILayout.HelpBox("No Problems Here :)", MessageType.Info);
             }
         }
+#endif
 
         public static ValidationCheck HasComponent(Type type, ValidationLevel failureLevel = ValidationLevel.Errors)
         {
@@ -68,7 +74,7 @@ namespace HandyVR.Interfaces
         public Func<IHasValidationChecks, ValidationLevel> checkCallback;
         public string failureMessage;
     }
-    
+
     public enum ValidationLevel
     {
         Valid = 0,
