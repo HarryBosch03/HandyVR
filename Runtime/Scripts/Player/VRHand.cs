@@ -54,6 +54,7 @@ namespace HandyVR.Player
         private void Awake()
         {
             ResetTransform = new GameObject($"{name} Reset Point").transform;
+            ResetTransform.SetParent(transform.parent);
             ResetTransform.position = transform.position;
             ResetTransform.rotation = transform.rotation;
 

@@ -13,7 +13,7 @@ namespace HandyVR.Utility
         {
             if (!group)
             {
-                group = new GameObject("HandyVR");
+                group = new GameObject("--- HandyVR ---");
             }
             
             transform.SetParent(group.transform);
