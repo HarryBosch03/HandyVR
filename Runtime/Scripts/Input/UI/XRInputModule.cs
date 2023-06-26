@@ -38,7 +38,7 @@ namespace HandyVR.Input.UI
                 data.position = savedPosition;
                 data.pointerCurrentRaycast = FindFirstRaycast(res);
  
-                var cam = Camera.main;
+                var cam = GetCamera();
                 if (!cam) return;
                 
                 // Cast the raycast result into a screen position for use by the base event system.
@@ -58,6 +58,16 @@ namespace HandyVR.Input.UI
                 ProcessScrollWheel(pointer);
                 ProcessPointerButtonDrag(pointer);
             }
+        }
+
+        private Camera GetCamera()
+        {
+            var cameras = FindObjectsOfType<Camera>();
+            foreach (var camera in cameras)
+            {
+                if (camera.stereoTargetEye == StereoTargetEyeMask.Both) return camera;
+            }
+            return null;
         }
 
         private void ProcessPointerButton(XRPointer pointer)
