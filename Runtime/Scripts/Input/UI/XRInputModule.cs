@@ -60,15 +60,7 @@ namespace HandyVR.Input.UI
             }
         }
 
-        private Camera GetCamera()
-        {
-            var cameras = FindObjectsOfType<Camera>();
-            foreach (var camera in cameras)
-            {
-                if (camera.stereoTargetEye == StereoTargetEyeMask.Both) return camera;
-            }
-            return null;
-        }
+        private Camera GetCamera() => Camera.main;
 
         private void ProcessPointerButton(XRPointer pointer)
         {
